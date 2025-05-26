@@ -25,27 +25,33 @@ app.get("/weather", async (req, res) => {
 
     if (cachedData) {
       console.log("Data from Redis ✅");
-      // Parse it back to object before sending
       return res.status(200).json(JSON.parse(cachedData));
     }
 
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.open_weather_api_secret}`;
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-
-    if (data.cod !== 200) {
-      return res.status(data.cod).json(data);
+    const apiKey = process.env.open_weather_api_secret;
+    if (!apiKey) {
+      return res.status(500).json({ error: "Missing OpenWeather API key" });
     }
 
-    // Save to Redis for 5 minutes
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("API error:", errText);
+      return res.status(response.status).json({ error: "Failed to fetch weather data" });
+    }
+
+    const data = await response.json();
     await redisClient.setEx(city, 300, JSON.stringify(data));
 
     res.json(data);
   } catch (err) {
-    console.error(err);
+    console.error("Server error:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

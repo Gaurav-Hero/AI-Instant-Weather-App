@@ -32,9 +32,12 @@ function Weather() {
 
   const searchWeather = async (city) => {
     try {
-      const url = `http://localhost:3000/weather?city=${city}`;
+      const url = `/weather?city=${city}`;
+      console.log(1)
       const response = await fetch(url);
+      console.log(2)
       const result = await response.json();
+      console.log(3)
 
       if (!result.weather || !result.weather[0]) {
         throw new Error("Invalid weather data format");
