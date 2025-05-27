@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/weather': {
-        target: 'http://localhost:3000', // this matches the Docker Compose service name
+        target: 'https://instant-weather-app-backend.onrender.com', // this matches the Docker Compose service name
         changeOrigin: true,
       },
     },
