@@ -33,7 +33,7 @@ function Weather() {
 
   const searchWeather = async (city) => {
     try {
-      const url = `/weather?city=${city}`;
+      const url = `https://instant-weather-app-backend.onrender.com/weather?city=${city}`;
       const startTime = Date.now(); // Start timer
 
       const response = await fetch(url);
