@@ -9,8 +9,14 @@ dotenv.config();
 const app = express();
 app.use(cors());
 
-const redisClient = createClient();
-redisClient.connect().catch(console.error);
+const redisClient = createClient({
+  url: process.env.REDIS_URL
+});
+redisClient.connect()
+.then(() => {
+  console.log("Redis DB connected !")
+})
+.catch(console.error);
 
 app.get("/weather", async (req, res) => {
   console.log("Request received!");
@@ -44,7 +50,9 @@ app.get("/weather", async (req, res) => {
 
     const data = await response.json();
     await redisClient.setEx(city, 300, JSON.stringify(data));
-
+    
+    console.log("Data set in Redis !")
+    console.log("Data from API !")
     res.json(data);
   } catch (err) {
     console.error("Server error:", err);

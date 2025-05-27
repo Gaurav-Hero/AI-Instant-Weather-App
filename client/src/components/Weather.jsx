@@ -12,6 +12,7 @@ import windIcon from '../assets/wind.png';
 function Weather() {
   const [city, setCity] = useState('');
   const [data, setData] = useState(null);
+  const [apiTime, setApiTime] = useState(null); // <-- Add this
 
   const allIcon = {
     '01d': clearIcon,
@@ -33,11 +34,12 @@ function Weather() {
   const searchWeather = async (city) => {
     try {
       const url = `/weather?city=${city}`;
-      console.log(1)
+      const startTime = Date.now(); // Start timer
+
       const response = await fetch(url);
-      console.log(2)
+      const endTime = Date.now(); // End timer
+
       const result = await response.json();
-      console.log(3)
 
       if (!result.weather || !result.weather[0]) {
         throw new Error("Invalid weather data format");
@@ -53,9 +55,12 @@ function Weather() {
         icon: icon
       });
 
+      setApiTime(endTime - startTime); // Set API response time
+
     } catch (error) {
       console.error("Error occurred: ", error.message);
       setData(null);
+      setApiTime(null); // Reset on error
       alert(`plz enter a valid city name !`)
     }
   };
@@ -76,6 +81,10 @@ function Weather() {
           <img src={data.icon} alt="weather-icon" className="weather-icon" />
           <p className="temprature">{data.temp}°C</p>
           <p className="location">{data.name}</p>
+
+          {apiTime !== null && (
+            <p className="api-time">⏱️ Response Time: {apiTime} ms</p>
+          )}
 
           <div className="weather-data">
             <div className="col">
