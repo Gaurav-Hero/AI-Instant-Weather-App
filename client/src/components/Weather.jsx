@@ -105,7 +105,7 @@ function Weather() {
         </>
       ) : (
         <p style={{ color: 'gray', marginTop: '2rem' }}>
-          Enter a city and click search to get weather
+          Enter a city and click search to get Weather
         </p>
       )}
     </div>
